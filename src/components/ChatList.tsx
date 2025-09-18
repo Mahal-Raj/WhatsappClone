@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MessageCircle, Search, Plus, Menu, Settings } from "lucide-react";
+import { MessageCircle, Search, Plus, Menu, Settings, User } from "lucide-react";
 
 interface Contact {
   id: string;
@@ -17,6 +17,8 @@ interface Contact {
 
 interface ChatListProps {
   onSelectChat: (contact: Contact) => void;
+  onOpenProfile: () => void;
+  onOpenSettings: () => void;
 }
 
 const mockContacts: Contact[] = [
@@ -62,7 +64,7 @@ const mockContacts: Contact[] = [
   },
 ];
 
-export const ChatList = ({ onSelectChat }: ChatListProps) => {
+export const ChatList = ({ onSelectChat, onOpenProfile, onOpenSettings }: ChatListProps) => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredContacts = mockContacts.filter(contact =>
@@ -80,10 +82,13 @@ export const ChatList = ({ onSelectChat }: ChatListProps) => {
           <h1 className="text-xl font-semibold">Chats</h1>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={onOpenProfile}>
+            <User className="w-5 h-5" />
+          </Button>
           <Button variant="ghost" size="icon">
             <Plus className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={onOpenSettings}>
             <Settings className="w-5 h-5" />
           </Button>
         </div>

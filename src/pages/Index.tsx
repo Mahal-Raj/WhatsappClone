@@ -2,6 +2,8 @@ import { useState } from "react";
 import { AuthScreen } from "@/components/AuthScreen";
 import { ChatList } from "@/components/ChatList";
 import { ChatWindow } from "@/components/ChatWindow";
+import { UserProfile } from "@/components/UserProfile";
+import { Settings } from "@/pages/Settings";
 
 interface Contact {
   id: string;
@@ -16,6 +18,8 @@ interface Contact {
 const Index = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const handleAuthComplete = () => {
     setIsAuthenticated(true);
@@ -23,10 +27,34 @@ const Index = () => {
 
   const handleSelectChat = (contact: Contact) => {
     setSelectedContact(contact);
+    setShowProfile(false);
+    setShowSettings(false);
   };
 
   const handleBackToList = () => {
     setSelectedContact(null);
+    setShowProfile(false);
+    setShowSettings(false);
+  };
+
+  const handleOpenProfile = () => {
+    setShowProfile(true);
+    setSelectedContact(null);
+    setShowSettings(false);
+  };
+
+  const handleBackFromProfile = () => {
+    setShowProfile(false);
+  };
+
+  const handleOpenSettings = () => {
+    setShowSettings(true);
+    setSelectedContact(null);
+    setShowProfile(false);
+  };
+
+  const handleBackFromSettings = () => {
+    setShowSettings(false);
   };
 
   if (!isAuthenticated) {
@@ -35,14 +63,22 @@ const Index = () => {
 
   return (
     <div className="h-screen flex bg-background">
-      {/* Chat List - Hidden on mobile when chat is selected */}
-      <div className={`${selectedContact ? "hidden lg:flex" : "flex"} lg:w-1/3 xl:w-1/4 flex-col`}>
-        <ChatList onSelectChat={handleSelectChat} />
+      {/* Chat List - Hidden on mobile when any other view is selected */}
+      <div className={`${selectedContact || showProfile || showSettings ? "hidden lg:flex" : "flex"} lg:w-1/3 xl:w-1/4 flex-col`}>
+        <ChatList 
+          onSelectChat={handleSelectChat} 
+          onOpenProfile={handleOpenProfile}
+          onOpenSettings={handleOpenSettings}
+        />
       </div>
 
-      {/* Chat Window - Full width on mobile, remaining space on desktop */}
-      <div className={`${selectedContact ? "flex" : "hidden lg:flex"} flex-1 flex-col`}>
-        {selectedContact ? (
+      {/* Main Content Area - Chat Window, Profile, or Settings */}
+      <div className={`${selectedContact || showProfile || showSettings ? "flex" : "hidden lg:flex"} flex-1 flex-col`}>
+        {showSettings ? (
+          <Settings onBack={handleBackFromSettings} />
+        ) : showProfile ? (
+          <UserProfile onBack={handleBackFromProfile} />
+        ) : selectedContact ? (
           <ChatWindow contact={selectedContact} onBack={handleBackToList} />
         ) : (
           <div className="flex-1 flex items-center justify-center bg-chat-bg">
